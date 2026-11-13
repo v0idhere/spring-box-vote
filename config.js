@@ -1,16 +1,9 @@
-// Edit this file to change the vote sites. After registering the server on a site,
-// put your server's own vote page link in "url".
+// Spring Box voting - your own votes, no other vote sites.
 window.SPRING_VOTE = {
   server: "Spring Box",
-  // Live top voters page served by the SpringBox plugin: "http://<server ip>:<vote port>/" (leave "" to hide the button)
-  topVotersUrl: "",
+  // Your server address + the extra vote port, e.g. "http://123.45.67.89:25570" (the SpringBox plugin answers there)
+  voteServer: "",
   reward: "1,000 Tokens + 1 Vote Key",
-  sites: [
-    { name: "Minecraft-MP",      url: "https://minecraft-mp.com/" },
-    { name: "MinecraftServers",  url: "https://minecraftservers.org/" },
-    { name: "Planet Minecraft",  url: "https://www.planetminecraft.com/servers/" },
-    { name: "TopG",              url: "https://topg.org/minecraft-servers/" },
-    { name: "Server List",       url: "https://minecraft-server-list.com/" },
-    { name: "MC Server.net",     url: "https://minecraft-server.net/" }
-  ]
+  // the 6 votes (same order as vote.types in the plugin config)
+  votes: ["Blossom Vote", "Petal Vote", "Sakura Vote", "Bloom Vote", "Garden Vote", "Spring Vote"]
 };

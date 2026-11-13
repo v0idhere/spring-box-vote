@@ -54,6 +54,7 @@
       background: linear-gradient(90deg, var(--pink), #b25cff); color: #fff; transition: transform .08s ease, filter .15s ease; }
     .vote:hover { filter: brightness(1.1); }
     .vote:active { transform: translateY(1px); }
+    .vote:disabled { cursor: default; background: var(--card-hi); color: var(--muted); }
     .vote.done { background: var(--card-hi); color: var(--green); }
     .extra { text-align: center; margin-top: 28px; }
     .extra a { display: inline-block; color: var(--text); text-decoration: none; font-weight: 900; padding: 12px 18px; border-radius: 12px;
@@ -70,7 +71,7 @@
     <header>
       <img src="logo.png" alt="Spring">
       <h1>Vote for Spring Box</h1>
-      <p class="sub">Vote on all 6 sites every day</p>
+      <p class="sub">6 votes every day, right here</p>
       <div class="reward">Every vote: <b id="reward">1,000 Tokens + 1 Vote Key</b></div>
     </header>
 
@@ -78,7 +79,7 @@
       <label for="player">Your Minecraft name</label>
       <input id="player" maxlength="16" autocomplete="off" placeholder="Steve">
     </div>
-    <p class="hint">We copy your name for you. Paste it on the vote site, then click vote there.</p>
+    <p class="hint">Type your name once, then click all 6 votes. Each vote counts once a day.</p>
 
     <section class="grid" id="sites"></section>
 
@@ -106,33 +107,34 @@
 
     const today = new Date().toISOString().slice(0, 10);
     function votedToday(i) { try { return localStorage.getItem('springbox-voted-' + i) === today; } catch (e) { return false; } }
+    const base = (cfg.voteServer || '').replace(/\/+$/, '');
 
     const grid = document.getElementById('sites');
-    cfg.sites.forEach((s, i) => {
+    cfg.votes.forEach((name, i) => {
       const card = document.createElement('article');
       card.className = 'site';
-      card.innerHTML = `<div class="top"><span class="num">#${i + 1}</span><h2></h2></div><p>Vote ${i + 1} of ${cfg.sites.length}</p>`;
-      card.querySelector('h2').textContent = s.name;
+      card.innerHTML = `<div class="top"><span class="num">#${i + 1}</span><h2></h2></div><p>Vote ${i + 1} of ${cfg.votes.length} · once a day</p>`;
+      card.querySelector('h2').textContent = name;
       const btn = document.createElement('button');
       btn.className = 'vote' + (votedToday(i) ? ' done' : '');
-      btn.textContent = votedToday(i) ? 'Voted today ✔' : 'Vote!';
-      btn.addEventListener('click', async () => {
-        const name = input.value.trim();
-        if (!/^[A-Za-z0-9_]{3,16}$/.test(name)) { show('Type your Minecraft name first'); input.focus(); return; }
-        try { await navigator.clipboard.writeText(name); } catch (e) {}
-        window.open(s.url, '_blank', 'noopener');
+      btn.textContent = !base ? 'Opening soon' : votedToday(i) ? 'Voted today ✔' : 'Vote!';
+      btn.disabled = !base;
+      btn.addEventListener('click', () => {
+        const player = input.value.trim();
+        if (!/^[A-Za-z0-9_]{3,16}$/.test(player)) { show('Type your Minecraft name first'); input.focus(); return; }
+        // the server checks the vote (once a day per player and per internet connection) and shows the result
+        window.open(base + '/vote?site=' + (i + 1) + '&name=' + encodeURIComponent(player), '_blank', 'noopener');
         try { localStorage.setItem('springbox-voted-' + i, today); } catch (e) {}
         btn.classList.add('done');
         btn.textContent = 'Voted today ✔';
-        show('Name copied: ' + name + '. Paste it on ' + s.name);
       });
       card.appendChild(btn);
       grid.appendChild(card);
     });
 
-    if (cfg.topVotersUrl) {
+    if (base) {
       const a = document.createElement('a');
-      a.href = cfg.topVotersUrl;
+      a.href = base + '/top';
       a.target = '_blank';
       a.rel = 'noopener';
       a.textContent = '🏆 Top Voters';

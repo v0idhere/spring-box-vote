@@ -88,9 +88,12 @@
   </main>
   <div class="toast" id="toast"></div>
 
-  <script src="config.js"></script>
+  <script src="config.js?v=3"></script>
   <script>
-    const cfg = window.SPRING_VOTE;
+    const cfg = window.SPRING_VOTE || {};
+    // never empty, even with an old cached config
+    if (!Array.isArray(cfg.votes) || !cfg.votes.length) cfg.votes = ['Blossom Vote', 'Petal Vote', 'Sakura Vote', 'Bloom Vote', 'Garden Vote', 'Spring Vote'];
+    if (!cfg.reward) cfg.reward = '1,000 Tokens + 1 Vote Key';
     const input = document.getElementById('player');
     const toast = document.getElementById('toast');
     document.getElementById('reward').textContent = cfg.reward;

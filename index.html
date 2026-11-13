@@ -109,7 +109,7 @@
     }
 
     const today = new Date().toISOString().slice(0, 10);
-    function votedToday(i) { try { return localStorage.getItem('springbox-voted-' + i) === today; } catch (e) { return false; } }
+    function votedToday(i) { try { return localStorage.getItem('springbox-v2-voted-' + i) === today; } catch (e) { return false; } }
     const base = (cfg.voteServer || '').replace(/\/+$/, '');
 
     const grid = document.getElementById('sites');
@@ -127,7 +127,7 @@
         if (!/^[A-Za-z0-9_]{3,16}$/.test(player)) { show('Type your Minecraft name first'); input.focus(); return; }
         // the server checks the vote (once a day per player and per internet connection) and shows the result
         window.open(base + '/vote?site=' + (i + 1) + '&name=' + encodeURIComponent(player), '_blank', 'noopener');
-        try { localStorage.setItem('springbox-voted-' + i, today); } catch (e) {}
+        try { localStorage.setItem('springbox-v2-voted-' + i, today); } catch (e) {}
         btn.classList.add('done');
         btn.textContent = 'Voted today ✔';
       });
